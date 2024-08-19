@@ -42,7 +42,7 @@ const createToken = (userId) => {
 
         const admin = await newAdmin.save();
         const token = createToken(admin._id);
-
+        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' }); 
         res.status(201).json({ success: true, token });
 
     } catch (error) {
@@ -70,7 +70,7 @@ const loginAdmin = async (req, res) => {
 
         
         const token = createToken(admin._id);
-
+        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production'}); 
         res.status(200).json({ success: true, token });
 
     } catch (error) {
