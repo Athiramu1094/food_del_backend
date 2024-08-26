@@ -13,25 +13,30 @@ const getAllFood = async (req, res) => {
 
 const addFood = async (req, res) => {
   try {
-  
-    if (!req.file) {
+    
+    if (!req.files) {
       return res
         .status(400)
         .json({ success: false, message: "No image file uploaded" });
     }
 
-    const uploadResult = await cloudinaryInstance.uploader.upload(
-      req.file.path
+    const mainImageUpload = await cloudinaryInstance.uploader.upload(
+      req.files.mainImage[0].path
     );
-    console.log("===> ", uploadResult);
+    const imageUpload = await cloudinaryInstance.uploader.upload(
+      req.files.image[0].path
+    );
+    
   
     const food = new Food({
       name: req.body.name,
-      description: req.body.description,
+      description:req.body.description,
       price: req.body.price,
       category: req.body.category,
-      image: uploadResult.secure_url, // Use the URL from Cloudinary
+      mainImage: mainImageUpload.secure_url,
+      image: imageUpload.secure_url, // Use the URL from Cloudinary
       restaurant: req.body.restaurant,
+      rating: req.body.rating,
     });
 
 
@@ -50,10 +55,19 @@ const updateFood = async (req, res) => {
     let updateData = req.body;
 
     if (req.file) {
-      const uploadResult = await cloudinaryInstance.uploader.upload(
-        req.file.path
-      );
-      updateData.image = uploadResult.secure_url;
+      if (req.files.mainImage) {
+        const mainImageUpload = await cloudinaryInstance.uploader.upload(
+          req.files.mainImage[0].path
+        );
+        updateData.mainImage = mainImageUpload.secure_url;
+      }
+
+      if (req.files.image) {
+        const imageUpload = await cloudinaryInstance.uploader.upload(
+          req.files.image[0].path
+        );
+        updateData.image = imageUpload.secure_url;
+      }
     }
 
     const updatedFood = await Food.findByIdAndUpdate(

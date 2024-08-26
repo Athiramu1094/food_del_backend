@@ -4,10 +4,9 @@ const restaurantSchema = new mongoose.Schema({
     name: { type: String, required: true },
     address: { type: String, required: true },
     image: { type: String }, 
-    description: { type: String },
     cuisine: { type: String, required: true },
     rating: { type: Number, default: 0 }, 
-    openingHours: { type: String } 
+    
 });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);

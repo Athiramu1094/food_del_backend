@@ -11,6 +11,21 @@ const getAllRestaurants = async (req, res) => {
   }
 };
 
+const getRestaurantById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({ success:false, message: "Restaurant not found" });
+    }
+    res.json({ success: true, data: restaurant });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "ERROR" });
+  }
+};
+
 const addRestaurant = async (req, res) => {
   
 
@@ -25,10 +40,9 @@ const addRestaurant = async (req, res) => {
   const restaurant = new Restaurant({
     name: req.body.name,
     address: req.body.address,
-    phone: req.body.phone,
-    email: req.body.email,
     cuisine: req.body.cuisine,
     description: req.body.description,
+    rating: req.body.rating,
     image: uploadResult.secure_url,
   });
 
@@ -80,6 +94,7 @@ const deleteRestaurant = async (req, res) => {
 
 module.exports = {
   addRestaurant,
+  getRestaurantById,
   getAllRestaurants,
   updateRestaurant,
   deleteRestaurant,

@@ -6,8 +6,8 @@ const { addFood, getAllFood, deleteFood, updateFood } = require('../controllers/
 
 
 router.get("/", getAllFood)
-router.post("/",upload.single("image"), addFood)
-router.put("/:id",upload.single("image"), updateFood)
+router.post("/", upload.fields([{ name: 'mainImage' }, { name: 'image' }]), addFood);
+router.put("/:id", upload.fields([{ name: 'mainImage' }, { name: 'image' }]), updateFood);
 router.delete("/:id", deleteFood)
 
 
