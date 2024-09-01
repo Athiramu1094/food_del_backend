@@ -28,7 +28,7 @@ app.use("/food", foodRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/api", userRoute);
 app.use("/order", orderRoute);
-app.use("/payment", paymentRoute);
+app.use('/payment', paymentRoute);
 app.use("/admin", adminRoute);
 
 app.listen(port, () => {

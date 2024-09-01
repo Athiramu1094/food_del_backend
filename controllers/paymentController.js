@@ -1,42 +1,57 @@
-const Payment = require('../models/paymentModel');
-const Order = require('../models/orderModel');
+const Stripe = require("stripe");
 
+const stripe = new Stripe(process.env.Stripe_Private_Api_Key);
+const client_domain = process.env.CLIENT_DOMAIN;
 
-const processPayment = async (req, res) => {
+const createCheckoutSession = async (req, res, next) => {
     try {
-        const { orderId, amount, paymentMethod } = req.body;
-
         
-        const order = await Order.findById(orderId);
-        if (!order) return res.status(404).json({ error: 'Order not found' });
+        const { items } = req.body;  
 
-        const transactionId = 'txn_' + Date.now(); // Generate a mock transaction ID
-        const paymentStatus = 'completed';
+        const lineItems = items.map((item) => ({
+            price_data: {
+                currency: "inr",
+                product_data: {
+                    name: item.name,
+                    images: [item.image],
+                },
+                unit_amount: Math.round(item.price * 100),
+            },
+            quantity: item.quantity,
+        }));
 
-        const newPayment = new Payment({
-            orderId,
-            amount,
-            status: paymentStatus,
-            transactionId,
-            paymentMethod
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: lineItems,
+            mode: "payment",
+            success_url: `${client_domain}/payment/success`,//frontend page to show success or failed
+            cancel_url: `${client_domain}/payment/cancel`,
         });
 
-        await newPayment.save();
-        res.status(201).json({ message: 'Payment processed successfully', newPayment });
+        console.log('sessionId====', session.id);
+
+        res.json({ success: true, sessionId: session.id });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to process payment' });
+        res.status(error.statusCode || 500).json({ error: error.message || "Internal server error" });
     }
 };
 
-
-const getPaymentStatus = async (req, res) => {
+const getSessionStatus = async (req, res) => {
     try {
-        const payment = await Payment.findById(req.params.id);
-        if (!payment) return res.status(404).json({ error: 'Payment not found' });
-        res.status(200).json(payment);
+        const sessionId = req.query.session_id;
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        res.send({
+            status: session?.status,
+            customer_email: session?.customer_details?.email,
+            session
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieve payment status' });
+        res.status(error.statusCode || 500).json({ error: error.message || "Internal server error" });
     }
 };
 
-module.exports = { processPayment, getPaymentStatus };
+module.exports = {
+    createCheckoutSession,
+    getSessionStatus
+};

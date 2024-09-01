@@ -11,47 +11,46 @@ const calculateTotalPrice = (items) => {
 
 const createOrder = async (req, res, next) => {
   try {
-    const { userId, restaurantId, items } = req.body;
+    const { userId,restaurantId, items } = req.body;
 
-   
     const user = await User.findById(userId);
     const restaurant = await Restaurant.findById(restaurantId);
     if (!user || !restaurant) {
       return res.status(400).json({ message: 'Invalid user or restaurant' });
     }
 
-    // Validate food existence and calculate price for each item
     const validatedItems = [];
+    let totalAmount = 0;
+
     for (const item of items) {
       const food = await Food.findById(item.foodId);
       if (!food) {
-        return res.status(400).json({ message: 'Invalid food item' });
+        return res.status(400).json({ message: `Invalid food item with ID: ${item.foodId}` });
       }
+      const itemAmount = food.price * (item.quantity || 1);
+      totalAmount += itemAmount;
+
       validatedItems.push({
         food: item.foodId,
-        quantity: item.quantity || 1, // Set default quantity to 1 if not provided
-        price: food.price,
+        quantity: item.quantity || 1,
       });
     }
 
-    // Calculate total price
-    const totalPrice = calculateTotalPrice(validatedItems);
-
-    // Create a new order
     const order = new Order({
       user: userId,
       restaurant: restaurantId,
-      items: validatedItems,
-      totalPrice,
-      status: 'pending', // Set initial status to pending
+      order: validatedItems,
+      totalAmount,
+      status: 'Pending', // Default status
+      paymentStatus: 'Pending', // Default payment status
+      address
     });
 
-   
     await order.save();
 
     return res.status(201).json({ message: 'Order created successfully', order });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating order:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };

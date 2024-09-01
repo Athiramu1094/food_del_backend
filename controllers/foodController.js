@@ -3,13 +3,26 @@ const Food = require("../models/foodModel.js");
 
 const getAllFood = async (req, res) => {
   try {
-    const foods = await Food.find({});
+    const { restaurant, category } = req.query; // Get restaurant ID and category from query params
+    let filter = {};
+
+    if (restaurant) {
+      filter.restaurant = restaurant;
+    }
+    if (category) {
+      filter.category = category;
+    }
+
+    const foods = await Food.find(filter); // No population
     res.json({ success: true, data: foods });
   } catch (error) {
-    console.log("error");
-    res.json({ success: false, message: "ERROR" });
+    console.error("Error fetching foods:", error);
+    res.status(500).json({ success: false, message: "An error occurred while fetching foods" });
   }
 };
+
+
+
 
 const addFood = async (req, res) => {
   try {
@@ -92,9 +105,26 @@ const deleteFood = async (req, res) => {
   }
 };
 
+const getFoodById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const food = await Food.findById(id);
+
+    if (!food) {
+      return res.status(404).json({ success: false, message: "Food not found" });
+    }
+
+    res.json({ success: true, data: food });
+  } catch (error) {
+    console.error("Error fetching food:", error);
+    res.status(500).json({ success: false, message: "An error occurred while fetching the food item" });
+  }
+};
+
 module.exports = {
   addFood,
   getAllFood,
   updateFood,
   deleteFood,
+  getFoodById
 };
