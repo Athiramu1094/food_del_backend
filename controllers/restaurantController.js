@@ -35,7 +35,7 @@ const addRestaurant = async (req, res) => {
     .catch((error) => {
       console.error(error);
     });
-  console.log(uploadResult);
+  
 
   const restaurant = new Restaurant({
     name: req.body.name,
