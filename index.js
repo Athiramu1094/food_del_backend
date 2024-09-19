@@ -12,13 +12,18 @@ const userRoute = require("./routes/userRoute");
 const orderRoute = require("./routes/orderRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const adminRoute = require("./routes/adminRoute");
+const couponRoutes = require("./routes/couponRoute");
 
 connectDB();
 
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin:[
+      "https://food-del-frontend-vwfn.vercel.app/",
+      "http://localhost:5173",
+      "https://food-del-backend-8w54.onrender.com"
+    ]
   })
 );
 app.use(express.json());
@@ -30,6 +35,7 @@ app.use("/api", userRoute);
 app.use("/order", orderRoute);
 app.use('/payment', paymentRoute);
 app.use("/admin", adminRoute);
+app.use("/api/coupons", couponRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
