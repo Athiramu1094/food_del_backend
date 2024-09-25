@@ -17,16 +17,15 @@ const getAllFood = async (req, res) => {
     res.json({ success: true, data: foods });
   } catch (error) {
     console.error("Error fetching foods:", error);
-    res.status(500).json({ success: false, message: "An error occurred while fetching foods" });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching foods",
+    });
   }
 };
 
-
-
-
 const addFood = async (req, res) => {
   try {
-    
     if (!req.files) {
       return res
         .status(400)
@@ -39,11 +38,10 @@ const addFood = async (req, res) => {
     const imageUpload = await cloudinaryInstance.uploader.upload(
       req.files.image[0].path
     );
-    
-  
+
     const food = new Food({
       name: req.body.name,
-      description:req.body.description,
+      description: req.body.description,
       price: req.body.price,
       category: req.body.category,
       mainImage: mainImageUpload.secure_url,
@@ -51,7 +49,6 @@ const addFood = async (req, res) => {
       restaurant: req.body.restaurant,
       rating: req.body.rating,
     });
-
 
     await food.save();
     res.json({ success: true, message: "Food added successfully" });
@@ -111,13 +108,29 @@ const getFoodById = async (req, res) => {
     const food = await Food.findById(id);
 
     if (!food) {
-      return res.status(404).json({ success: false, message: "Food not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Food not found" });
     }
 
     res.json({ success: true, data: food });
   } catch (error) {
     console.error("Error fetching food:", error);
-    res.status(500).json({ success: false, message: "An error occurred while fetching the food item" });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the food item",
+    });
+  }
+};
+
+const search = async (req, res) => {
+  try {
+    const query = req.query.query;
+    const results = await Food.find({ name: new RegExp(query, "i") });
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -126,5 +139,6 @@ module.exports = {
   getAllFood,
   updateFood,
   deleteFood,
-  getFoodById
+  getFoodById,
+  search,
 };
