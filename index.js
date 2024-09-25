@@ -14,6 +14,7 @@ const paymentRoute = require("./routes/paymentRoute");
 const adminRoute = require("./routes/adminRoute");
 
 
+
 connectDB();
 
 app.use(
@@ -36,6 +37,7 @@ app.use("/api", userRoute);
 app.use("/order", orderRoute);
 app.use('/payment', paymentRoute);
 app.use("/admin", adminRoute);
+
 
 
 app.listen(port, () => {

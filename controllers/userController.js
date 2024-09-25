@@ -25,12 +25,10 @@ const createUser = async (req, res) => {
     }
 
     if (password.length < 8) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Password must be at least 8 characters long",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -120,13 +118,15 @@ const userProfile = async (req, res, next) => {
 const checkUser = async (req, res, next) => {
   try {
     const user = req.user;
-
+    console.log("-> ", user);
     if (!user) {
       return res
         .status(200)
         .json({ success: true, message: "user not authenticated" });
     }
-    res.json({ success: true, message: "User authenticated" });
+    console.log("===> ", req.user);
+    // res.json({ success: true, message: "User authenticated", });
+    res.json({ success: true, message: "User authenticated", user: req.user });
   } catch (error) {
     res
       .status(error.status || 500)

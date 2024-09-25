@@ -5,7 +5,6 @@ const client_domain = process.env.CLIENT_DOMAIN;
 
 const createCheckoutSession = async (req, res, next) => {
     try {
-        
         const { items } = req.body;  
 
         const lineItems = items.map((item) => ({
@@ -15,7 +14,7 @@ const createCheckoutSession = async (req, res, next) => {
                     name: item.name,
                     images: [item.image],
                 },
-                unit_amount: Math.round(item.price * 100),
+                unit_amount: Math.round(item.price * 100), 
             },
             quantity: item.quantity,
         }));
@@ -24,8 +23,8 @@ const createCheckoutSession = async (req, res, next) => {
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: "payment",
-            success_url: `${client_domain}/payment/success`,//frontend page to show success or failed
-            cancel_url: `${client_domain}/payment/cancel`,
+            success_url: `${client_domain}/payment/success`, // URL to redirect after payment success
+            cancel_url: `${client_domain}/payment/cancel`,   // URL to redirect if payment is canceled
         });
 
         console.log('sessionId====', session.id);
@@ -35,6 +34,7 @@ const createCheckoutSession = async (req, res, next) => {
         res.status(error.statusCode || 500).json({ error: error.message || "Internal server error" });
     }
 };
+
 
 const getSessionStatus = async (req, res) => {
     try {

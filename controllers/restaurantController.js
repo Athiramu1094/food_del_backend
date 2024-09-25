@@ -1,8 +1,10 @@
 const { cloudinaryInstance } = require("../config/cloudinaryConfig.js");
 const Restaurant = require("../models/restaurantModel.js");
 
+
 const getAllRestaurants = async (req, res) => {
   try {
+    console.log
     const restaurants = await Restaurant.find({});
     res.json({ success: true, data: restaurants });
   } catch (error) {
@@ -17,7 +19,9 @@ const getRestaurantById = async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
-      return res.status(404).json({ success:false, message: "Restaurant not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Restaurant not found" });
     }
     res.json({ success: true, data: restaurant });
   } catch (error) {
@@ -28,14 +32,12 @@ const getRestaurantById = async (req, res) => {
 
 const addRestaurant = async (req, res) => {
   
-
   // Upload an image
   const uploadResult = await cloudinaryInstance.uploader
     .upload(req.file.path)
     .catch((error) => {
       console.error(error);
     });
-  
 
   const restaurant = new Restaurant({
     name: req.body.name,
