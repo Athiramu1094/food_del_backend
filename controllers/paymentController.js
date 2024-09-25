@@ -27,7 +27,7 @@ const createCheckoutSession = async (req, res, next) => {
             cancel_url: `${client_domain}/payment/cancel`,   // URL to redirect if payment is canceled
         });
 
-        console.log('sessionId====', session.id);
+        
 
         res.json({ success: true, sessionId: session.id });
     } catch (error) {

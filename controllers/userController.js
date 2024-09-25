@@ -75,7 +75,12 @@ const loginUser = async (req, res) => {
     }
 
     const token = createToken(user._id);
-    res.cookie("token", token);
+    //res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    });
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -118,13 +123,13 @@ const userProfile = async (req, res, next) => {
 const checkUser = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log("-> ", user);
+    
     if (!user) {
       return res
         .status(200)
         .json({ success: true, message: "user not authenticated" });
     }
-    console.log("===> ", req.user);
+    
     // res.json({ success: true, message: "User authenticated", });
     res.json({ success: true, message: "User authenticated", user: req.user });
   } catch (error) {
