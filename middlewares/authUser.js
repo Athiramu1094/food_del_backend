@@ -20,7 +20,7 @@ const authUser = (req, res, next) => {
     console.error("Error in authUser middleware:", error);
     return res
       .status(401)
-      .json({ success: false, message: "User not authenticated" });
+      .json({ success: false, message: "Invalid Token" });
   }
 };
 
