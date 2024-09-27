@@ -71,7 +71,8 @@ const createOrder = async (req, res, next) => {
     });
     
     await order.save();
-
+    await order.populate("order.food")
+    
     return res
       .status(201)
       .json({ message: "Order created successfully", order });
@@ -82,17 +83,27 @@ const createOrder = async (req, res, next) => {
 };
 
 
-const getAllOrders = async (req, res, next) => {
+const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate("user", "name")
-      .populate("restaurant", "name");
-    return res.status(200).json({ orders });
+    const { userId } = req.query;
+
+   
+    const orders = await Order.find({ user: userId })
+      .populate({
+        path: 'order.food',  
+        select: 'name price image' 
+      })
+      .populate('restaurant', 'name image'); 
+
+    res.status(200).json({ orders });
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Error fetching orders' });
   }
 };
+
+
+
 
 
 const getOrderById = async (req, res, next) => {
