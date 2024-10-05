@@ -79,8 +79,12 @@ const loginAdmin = async (req, res) => {
         const token = createToken(admin._id, admin.role);// Make sure createToken is defined elsewhere
 
         // Set the token in an HttpOnly cookie (optional, but useful for security)
-        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-
+        //res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+          });
         // Return response with the token and user info
         res.status(200).json({
             success: true,
