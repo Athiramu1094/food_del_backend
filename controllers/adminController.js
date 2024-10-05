@@ -33,12 +33,10 @@ const signupAdmin = async (req, res) => {
 
     // Validate password length
     if (password.length < 8) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Password must be at least 8 characters long",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      });
     }
 
     // Hash password
@@ -91,8 +89,6 @@ const loginAdmin = async (req, res) => {
 
     // Generate token using a function (ensure you have this function)
     const token = createToken(admin._id, admin.role); // Make sure createToken is defined elsewhere
-    console.log("===> ", process.env.NODE_ENV);
-    console.log("===> ", process.env.NODE_ENV === "production");
     // Set the token in an HttpOnly cookie (optional, but useful for security)
     res.cookie("token", token, {
       httpOnly: true,
@@ -148,12 +144,10 @@ const adminProfile = async (req, res, next) => {
     res.json({ success: true, message: "Admin data fetched", data: adminData });
   } catch (error) {
     console.error("Profile Fetch Error:", error);
-    res
-      .status(error.status || 500)
-      .json({
-        success: false,
-        message: error.message || "Internal server error",
-      });
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
 };
 
