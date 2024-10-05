@@ -92,8 +92,8 @@ const loginAdmin = async (req, res) => {
     // Set the token in an HttpOnly cookie (optional, but useful for security)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
     // Return response with the token and user info
     res.status(200).json({
@@ -113,8 +113,8 @@ const logoutAdmin = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
     res.status(200).json({ success: true, message: "Logout successful" });
   } catch (error) {
