@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'admin'], 
         default: 'user' 
     },
+    gender: String,
+    dob: Date,
+  
     cartData: { type: Object, default: {} }  
 }, { minimize: false });
 

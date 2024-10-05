@@ -9,10 +9,10 @@ const {
 } = require("../controllers/adminController");
 const authAdmin = require("../middlewares/authAdmin");
 
-router.post("/signup", signupAdmin);
-router.post("/login", loginAdmin);
+router.post("/admin/signup", signupAdmin);
+router.post("/admin/login", loginAdmin);
 router.post("/logout", logoutAdmin);
 router.get("/profile/:id", authAdmin, adminProfile);
-router.get("/check", authAdmin, checkAdmin);
+router.get("/api/check", authAdmin, checkAdmin);
 
 module.exports = router;

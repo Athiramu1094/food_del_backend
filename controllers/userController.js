@@ -88,6 +88,8 @@ const loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        gender: user.gender, 
+        dob: user.dob,    
       },
     });
   } catch (error) {
@@ -109,16 +111,43 @@ const logoutUser = async (req, res) => {
 
 const userProfile = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const useData = await User.findById(id).select("-password");
+    const { id } = req.params; // Get the user ID from the request parameters
+    const useData = await User.findById(id).select("-password"); // Fetch user data by ID, exclude the password
 
-    res.json({ success: true, message: "user data fetched", data: useData });
+    res.json({ 
+      success: true, 
+      message: "user data fetched", 
+      data: useData // Return the user data in the response
+    });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .json({ message: error.message || "Internal server error" });
+    res.status(error.status || 500).json({ 
+      message: error.message || "Internal server error" 
+    });
   }
 };
+
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, gender, dob } = req.body;
+
+    // Update user data in the database
+    const updatedUser = await User.findByIdAndUpdate(id, { name, gender, dob }, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
 
 const checkUser = async (req, res, next) => {
   try {
@@ -145,4 +174,5 @@ module.exports = {
   logoutUser,
   userProfile,
   checkUser,
+  updateUserProfile
 };

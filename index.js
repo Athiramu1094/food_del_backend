@@ -24,7 +24,8 @@ app.use(
       "https://food-del-frontend-vwfn.vercel.app",
       "http://localhost:5173",
       "https://food-del-backend-8w54.onrender.com",
-      "https://food-del-admin-blond.vercel.app"
+      "https://food-del-admin-blond.vercel.app",
+      "http://localhost:5174"
     ]
   })
 );
@@ -36,7 +37,7 @@ app.use("/restaurant", restaurantRoute);
 app.use("/api", userRoute);
 app.use("/order", orderRoute);
 app.use('/payment', paymentRoute);
-app.use("/admin", adminRoute);
+app.use("/", adminRoute);
 
 
 
